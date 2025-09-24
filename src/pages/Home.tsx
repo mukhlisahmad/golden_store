@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { type JSX } from 'react'
 import ThemeToggle from '../components/theme/ThemeToggle'
 import { SocialLinks } from '../components/shared/SocialLinks'
 import ProductGrid from '../components/products/ProductGrid'

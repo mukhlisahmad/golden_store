@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { type JSX } from 'react'
 import { useTheme } from 'next-themes'
 import { Moon, Sun } from 'lucide-react'
 import { Button } from '../ui/button'

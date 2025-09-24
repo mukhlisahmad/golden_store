@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { type JSX } from 'react'
 import { Product } from './types'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../ui/card'
 import { Badge } from '../ui/badge'

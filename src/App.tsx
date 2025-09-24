@@ -1,7 +1,7 @@
 import { HashRouter, Route, Routes } from 'react-router'
 import HomePage from './pages/Home'
 import { ThemeProvider } from 'next-themes'
-import React from 'react'
+import React, { type JSX } from 'react'
 
 /**
  * App.tsx

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { type JSX } from 'react'
 import { Facebook, Instagram, ShoppingBag, MessageCircle, Clapperboard } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
 
