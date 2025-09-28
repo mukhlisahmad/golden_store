@@ -23,7 +23,7 @@ export interface StoreConfig {
  * Ganti whatsappNumber & tautan sosial sesuai milik Anda.
  * Nomor WA format internasional tanpa "+" (contoh: 6281234567890).
  */
-export const STORE_CONFIG: StoreConfig = {
+export const DEFAULT_STORE_CONFIG: StoreConfig = {
   name: 'Golden Store',
   whatsappNumber: '6281234567890', // TODO: ganti ke nomor WhatsApp Anda
   social: {
@@ -35,6 +35,8 @@ export const STORE_CONFIG: StoreConfig = {
   },
 }
 
+export const STORE_CONFIG = DEFAULT_STORE_CONFIG
+
 /**
  * buildWaLink
  * Membangun tautan wa.me dengan pesan prefilled berisi detail produk.
@@ -44,11 +46,13 @@ export function buildWaLink(params: {
   productName: string
   price?: number
   productUrl?: string
+  storeName?: string
 }): string {
-  const number = (params.number ?? STORE_CONFIG.whatsappNumber).trim()
-  const { productName, price, productUrl } = params
+  const number = (params.number ?? DEFAULT_STORE_CONFIG.whatsappNumber).trim()
+  const { productName, price, productUrl, storeName } = params
+  const greetingStoreName = storeName?.trim().length ? storeName.trim() : DEFAULT_STORE_CONFIG.name
   const lines = [
-    'Halo admin Golden Store, saya ingin menanyakan ketersediaan produk:',
+    `Halo admin ${greetingStoreName}, saya ingin menanyakan ketersediaan produk:`,
     `- Produk: ${productName}`,
     price ? `- Harga: ${formatIDR(price)}` : undefined,
     productUrl ? `- Link: ${productUrl}` : undefined,

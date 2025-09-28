@@ -11,8 +11,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '../ui/dialog'
-import { buildWaLink, formatIDR, STORE_CONFIG } from '../../config/store'
-import { MessageCircle, Info } from 'lucide-react'
+import { buildWaLink, formatIDR, DEFAULT_STORE_CONFIG } from '../../config/store'
+import { MessageCircle, Info, ShoppingBag } from 'lucide-react'
+import { useStoreSettings } from '../../contexts/StoreSettingsContext'
 
 /**
  * ProductCard.tsx
@@ -40,16 +41,23 @@ function ProductImage({ src, alt }: { src: string; alt: string }): JSX.Element {
 }
 
 export function ProductCard({ product }: ProductCardProps): JSX.Element {
-  const { name, price, description, image, tags } = product
+  const { settings: storeSettings } = useStoreSettings()
+  const { name, price, description, image, tags, shopeeUrl, whatsappNumber } = product
+  const storeName = storeSettings.storeName ?? DEFAULT_STORE_CONFIG.name
+  const storeWhatsapp = storeSettings.whatsappNumber ?? DEFAULT_STORE_CONFIG.whatsappNumber
 
   /**
    * handleWa
    * Mengarahkan ke WhatsApp dengan pesan prefilled.
    */
   const waHref = buildWaLink({
+    number: whatsappNumber ?? storeWhatsapp,
     productName: name,
     price,
+    productUrl: shopeeUrl,
+    storeName,
   })
+  const shopeeHref = shopeeUrl
 
   return (
     <Card className="group relative overflow-hidden border-amber-200/60 shadow-sm transition hover:shadow-md dark:border-amber-300/20">
@@ -80,7 +88,7 @@ export function ProductCard({ product }: ProductCardProps): JSX.Element {
           </div>
         )}
       </CardContent>
-      <CardFooter className="flex items-center justify-between gap-2">
+      <CardFooter className="flex flex-wrap items-center justify-between gap-2">
         <Dialog>
           <DialogTrigger asChild>
             <Button variant="outline" className="border-amber-300 text-amber-800 hover:bg-amber-50 dark:border-amber-300/40 dark:text-amber-200 dark:hover:bg-amber-900/20">
@@ -94,7 +102,7 @@ export function ProductCard({ product }: ProductCardProps): JSX.Element {
                 {name}
               </DialogTitle>
               <DialogDescription>
-                {STORE_CONFIG.name} — produk pilihan dengan kualitas terbaik.
+                {storeName} — produk pilihan dengan kualitas terbaik.
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 md:grid-cols-2">
@@ -127,7 +135,13 @@ export function ProductCard({ product }: ProductCardProps): JSX.Element {
                     ))}
                   </div>
                 )}
-                <div className="pt-1">
+                <div className="grid gap-2 pt-1">
+                  <a href={shopeeHref} target="_blank" rel="noreferrer">
+                    <Button variant="outline" className="w-full border-amber-200 text-amber-700 hover:border-amber-300 hover:text-amber-800 dark:border-amber-300/40 dark:text-amber-200 dark:hover:border-amber-200">
+                      <ShoppingBag className="mr-2 h-4 w-4" />
+                      Lihat di Shopee
+                    </Button>
+                  </a>
                   <a href={waHref} target="_blank" rel="noreferrer">
                     <Button className="w-full bg-gradient-to-r from-amber-600 to-yellow-500 text-white hover:from-amber-700 hover:to-yellow-600 dark:from-amber-500 dark:to-yellow-400">
                       <MessageCircle className="mr-2 h-4 w-4" />
@@ -139,6 +153,12 @@ export function ProductCard({ product }: ProductCardProps): JSX.Element {
             </div>
           </DialogContent>
         </Dialog>
+        <a href={shopeeHref} target="_blank" rel="noreferrer">
+          <Button variant="outline" className="border-amber-300 text-amber-800 hover:bg-amber-50 dark:border-amber-300/40 dark:text-amber-200 dark:hover:bg-amber-900/20">
+            <ShoppingBag className="mr-2 h-4 w-4" />
+            Shopee
+          </Button>
+        </a>
         <a href={waHref} target="_blank" rel="noreferrer">
           <Button className="bg-amber-600 text-white hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600">
             <MessageCircle className="mr-2 h-4 w-4" />

@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id           String   @id @default(uuid())
+  username     String   @unique
+  passwordHash String
+  role         String   @default("admin")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Product {
+  id              String    @id @default(uuid())
+  slug            String    @unique
+  name            String
+  price           Int
+  image           String
+  description     String
+  shopeeUrl       String
+  whatsappNumber  String?
+  tags            String[]
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model StoreSetting {
+  id              String            @id @default(uuid())
+  key             String            @unique
+  storeName       String
+  logoUrl         String?
+  heroHeadline    String
+  heroTagline     String
+  heroDescription String
+  heroImage       String
+  whatsappNumber  String?
+  instagram       String?
+  facebook        String?
+  tiktok          String?
+  shopee          String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  navigation      NavigationItem[]
+}
+
+model NavigationItem {
+  id         String        @id @default(uuid())
+  label      String
+  url        String
+  order      Int           @default(0)
+  isExternal Boolean       @default(false)
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  storeId    String
+  store      StoreSetting  @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@index([storeId, order])
+}
