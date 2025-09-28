@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { type JSX } from 'react'
 import {
   fetchStoreSettings,
   StoreSettings,
@@ -99,4 +99,3 @@ export function StoreSettingsProvider({ children }: { children: React.ReactNode 
 export function useStoreSettings(): StoreSettingsContextValue {
   return React.useContext(StoreSettingsContext)
 }
-

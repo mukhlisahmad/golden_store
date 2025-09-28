@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { type JSX } from 'react'
 import { useNavigate, Navigate } from 'react-router'
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card'
 import { Label } from '../../components/ui/label'
@@ -95,4 +95,3 @@ export default function AdminLogin(): JSX.Element {
     </div>
   )
 }
-

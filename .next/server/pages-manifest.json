@@ -1,11 +1,11 @@
 {
   "/_app": "pages/_app.js",
+  "/_error": "pages/_error.js",
   "/Home": "pages/Home.js",
   "/admin/AdminLogin": "pages/admin/AdminLogin.js",
-  "/_error": "pages/_error.js",
-  "/admin/AdminProducts": "pages/admin/AdminProducts.js",
   "/admin/AdminProductForm": "pages/admin/AdminProductForm.js",
-  "/admin/AdminStoreSettings": "pages/admin/AdminStoreSettings.js",
+  "/admin/AdminProducts": "pages/admin/AdminProducts.js",
   "/admin/AdminProfile": "pages/admin/AdminProfile.js",
+  "/admin/AdminStoreSettings": "pages/admin/AdminStoreSettings.js",
   "/_document": "pages/_document.js"
 }

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { type JSX } from 'react'
 import { NavLink, useNavigate } from 'react-router'
 import { Button } from '../ui/button'
 import { useAuthStore } from '../../store/authStore'
@@ -67,4 +67,3 @@ export function AdminLayout({ title, description, actions, children }: AdminLayo
 }
 
 export default AdminLayout
-

@@ -27,9 +27,11 @@ export async function PUT(req: NextRequest) {
     const body = await req.json().catch(() => ({})) as Record<string, unknown>
     const parsed = sanitizeStoreSettingsInput(body)
 
-    if (parsed.error) {
+    if (parsed.error || !parsed.value) {
       throw new BadRequestError(parsed.error)
     }
+
+    const { value } = parsed
 
     const updated = await prisma.$transaction(async (tx) => {
       let store = await tx.storeSetting.findFirst()
@@ -37,19 +39,19 @@ export async function PUT(req: NextRequest) {
         store = await tx.storeSetting.create({
           data: {
             key: 'default',
-            ...parsed.value.storeData,
+            ...value.storeData,
           },
         })
       } else {
         store = await tx.storeSetting.update({
           where: { id: store.id },
-          data: parsed.value.storeData,
+          data: value.storeData,
         })
       }
 
-      if (parsed.value.navigation) {
+      if (value.navigation) {
         const keepIds: string[] = []
-        for (const item of parsed.value.navigation) {
+        for (const item of value.navigation) {
           const navData = {
             label: item.label,
             url: item.url,

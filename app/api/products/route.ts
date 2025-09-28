@@ -27,16 +27,18 @@ export async function POST(req: NextRequest) {
     await requireAuth(req)
     const body = await req.json().catch(() => ({})) as Record<string, unknown>
     const parsed = sanitizeProductInput(body)
-    if (parsed.error) {
+    if (parsed.error || !parsed.value) {
       throw new BadRequestError(parsed.error)
     }
 
-    const slugBase = parsed.value.slug ? slugify(parsed.value.slug) : slugify(parsed.value.name)
+    const { value } = parsed
+
+    const slugBase = value.slug ? slugify(value.slug) : slugify(value.name)
     const slug = await ensureUniqueSlug(slugBase)
 
     const product = await prisma.product.create({
       data: {
-        ...parsed.value,
+        ...value,
         slug,
       },
     })

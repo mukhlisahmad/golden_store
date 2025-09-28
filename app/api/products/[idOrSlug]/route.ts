@@ -51,14 +51,16 @@ export async function PUT(req: NextRequest, context: RouteContext) {
 
     const body = await req.json().catch(() => ({})) as Record<string, unknown>
     const parsed = sanitizeProductInput(body)
-    if (parsed.error) {
+    if (parsed.error || !parsed.value) {
       throw new BadRequestError(parsed.error)
     }
 
-    const slugBase = parsed.value.slug
-      ? slugify(parsed.value.slug)
-      : parsed.value.name !== existing.name
-        ? slugify(parsed.value.name)
+    const { value } = parsed
+
+    const slugBase = value.slug
+      ? slugify(value.slug)
+      : value.name !== existing.name
+        ? slugify(value.name)
         : existing.slug
 
     const slug = await ensureUniqueSlug(slugBase, existing.id)
@@ -66,7 +68,7 @@ export async function PUT(req: NextRequest, context: RouteContext) {
     const updated = await prisma.product.update({
       where: { id: existing.id },
       data: {
-        ...parsed.value,
+        ...value,
         slug,
       },
     })
