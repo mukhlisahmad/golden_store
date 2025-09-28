@@ -1,5 +1,9 @@
+"use client"
+
 import React, { type JSX } from 'react'
-import { NavLink, useNavigate } from 'react-router'
+import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
+import type { Route } from 'next'
 import { Button } from '../ui/button'
 import { useAuthStore } from '../../store/authStore'
 
@@ -10,20 +14,22 @@ interface AdminLayoutProps {
   children: React.ReactNode
 }
 
-const NAV_ITEMS = [
-  { to: '/admin/products', label: 'Produk' },
-  { to: '/admin/store-settings', label: 'Pengaturan Toko' },
-  { to: '/admin/profile', label: 'Profil Admin' },
+const NAV_ITEMS: Array<{ to: Route; label: string }> = [
+  { to: '/admin/products' as Route, label: 'Produk' },
+  { to: '/admin/store-settings' as Route, label: 'Pengaturan Toko' },
+  { to: '/admin/profile' as Route, label: 'Profil Admin' },
 ]
 
 export function AdminLayout({ title, description, actions, children }: AdminLayoutProps): JSX.Element {
-  const navigate = useNavigate()
+  const router = useRouter()
+  const pathname = usePathname()
   const logout = useAuthStore((state) => state.logout)
+  const currentPath = pathname ?? ''
 
   const handleLogout = React.useCallback(() => {
     logout()
-    navigate('/admin/login', { replace: true })
-  }, [logout, navigate])
+    router.replace('/admin/login' as Route)
+  }, [logout, router])
 
   return (
     <div className="min-h-screen bg-neutral-100 px-4 py-8 dark:bg-neutral-950">
@@ -43,20 +49,18 @@ export function AdminLayout({ title, description, actions, children }: AdminLayo
           </div>
           <nav className="mt-4 flex flex-wrap gap-3 text-sm font-medium text-neutral-600 dark:text-neutral-300">
             {NAV_ITEMS.map((item) => (
-              <NavLink
+              <Link
                 key={item.to}
-                to={item.to}
-                className={({ isActive }) =>
-                  [
-                    'rounded-md px-3 py-1 transition',
-                    isActive
-                      ? 'bg-amber-600 text-white shadow-sm dark:bg-amber-500 dark:text-neutral-900'
-                      : 'hover:text-amber-700 dark:hover:text-amber-200',
-                  ].join(' ')
-                }
+                href={item.to}
+                className={[
+                  'rounded-md px-3 py-1 transition',
+                  currentPath === item.to || currentPath.startsWith(`${item.to}/`)
+                    ? 'bg-amber-600 text-white shadow-sm dark:bg-amber-500 dark:text-neutral-900'
+                    : 'hover:text-amber-700 dark:hover:text-amber-200',
+                ].join(' ')}
               >
                 {item.label}
-              </NavLink>
+              </Link>
             ))}
           </nav>
         </header>

@@ -1,4 +1,4 @@
-import { API_BASE_URL } from '../config/api'
+import { buildApiUrl } from '../config/api'
 import { Product } from '../components/products/types'
 import { AuthUser, getAuthToken } from '../store/authStore'
 
@@ -85,7 +85,8 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     headers.set('Authorization', `Bearer ${token}`)
   }
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const url = buildApiUrl(path)
+  const response = await fetch(url, {
     ...options,
     headers,
   })

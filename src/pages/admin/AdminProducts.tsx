@@ -1,5 +1,9 @@
+"use client"
+
 import React, { type JSX } from 'react'
-import { useNavigate, Link } from 'react-router'
+import Link from 'next/link'
+import type { Route } from 'next'
+import { useRouter } from 'next/navigation'
 import { Button } from '../../components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../components/ui/table'
@@ -9,11 +13,13 @@ import { useAuthStore } from '../../store/authStore'
 import AdminLayout from '../../components/admin/AdminLayout'
 
 export default function AdminProducts(): JSX.Element {
-  const navigate = useNavigate()
+  const router = useRouter()
   const token = useAuthStore((state) => state.token)
   const isHydrated = useAuthStore((state) => state.isHydrated)
   const hydrate = useAuthStore((state) => state.hydrate)
   const logout = useAuthStore((state) => state.logout)
+  const loginRoute = '/admin/login' as Route
+  const newProductRoute = '/admin/products/new' as Route
 
   const [products, setProducts] = React.useState<Product[]>([])
   const [loading, setLoading] = React.useState(true)
@@ -36,7 +42,7 @@ export default function AdminProducts(): JSX.Element {
       console.error('Gagal mengambil produk:', err)
       if (err instanceof ApiError && err.status === 401) {
         logout()
-        navigate('/admin/login', { replace: true })
+        router.replace(loginRoute)
         return
       }
       const message = err instanceof ApiError && err.message
@@ -46,16 +52,16 @@ export default function AdminProducts(): JSX.Element {
     } finally {
       setLoading(false)
     }
-  }, [logout, navigate])
+  }, [logout, router, loginRoute])
 
   React.useEffect(() => {
     if (!isHydrated) return
     if (!token) {
-      navigate('/admin/login', { replace: true })
+      router.replace(loginRoute)
       return
     }
     void loadProducts()
-  }, [isHydrated, token, loadProducts, navigate])
+  }, [isHydrated, token, loadProducts, router, loginRoute])
 
   const handleDelete = async (id: string) => {
     const confirmDelete = window.confirm('Hapus produk ini?')
@@ -69,7 +75,7 @@ export default function AdminProducts(): JSX.Element {
       console.error('Gagal menghapus produk:', err)
       if (err instanceof ApiError && err.status === 401) {
         logout()
-        navigate('/admin/login', { replace: true })
+        router.replace(loginRoute)
         return
       }
       const message = err instanceof ApiError && err.message ? err.message : 'Gagal menghapus produk. Silakan coba lagi.'
@@ -85,7 +91,7 @@ export default function AdminProducts(): JSX.Element {
       description="Kelola katalog Golden Store: tambah, ubah, dan hapus produk."
       actions={
         <Button
-          onClick={() => navigate('/admin/products/new')}
+          onClick={() => router.push(newProductRoute)}
           className="bg-amber-600 text-white hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600"
         >
           + Produk Baru
@@ -137,7 +143,7 @@ export default function AdminProducts(): JSX.Element {
                       <TableCell>{product.tags?.join(', ') ?? '-'}</TableCell>
                       <TableCell className="flex justify-end gap-2">
                         <Button size="sm" variant="outline" asChild>
-                          <Link to={`/admin/products/${product.id}/edit`}>Ubah</Link>
+                          <Link href={`/admin/products/${product.id}/edit` as Route}>Ubah</Link>
                         </Button>
                         <Button
                           size="sm"

@@ -1,5 +1,8 @@
+"use client"
+
 import React, { type JSX } from 'react'
-import { useNavigate } from 'react-router'
+import type { Route } from 'next'
+import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card'
 import { Input } from '../../components/ui/input'
 import { Textarea } from '../../components/ui/textarea'
@@ -67,7 +70,7 @@ function mapNavigationToState(navigation: NavigationItem[] = []): NavItemState[]
 }
 
 function AdminStoreSettings(): JSX.Element {
-  const navigate = useNavigate()
+  const router = useRouter()
   const { settings, refresh } = useStoreSettings()
   const token = useAuthStore((state) => state.token)
   const isHydrated = useAuthStore((state) => state.isHydrated)
@@ -79,6 +82,7 @@ function AdminStoreSettings(): JSX.Element {
   const [saving, setSaving] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
   const [success, setSuccess] = React.useState<string | null>(null)
+  const loginRoute = '/admin/login' as Route
 
   React.useEffect(() => {
     if (!isHydrated) {
@@ -88,9 +92,9 @@ function AdminStoreSettings(): JSX.Element {
 
   React.useEffect(() => {
     if (isHydrated && !token) {
-      navigate('/admin/login', { replace: true })
+      router.replace(loginRoute)
     }
-  }, [isHydrated, token, navigate])
+  }, [isHydrated, token, router, loginRoute])
 
   React.useEffect(() => {
     setForm(mapSettingsToForm(settings))
@@ -198,7 +202,7 @@ function AdminStoreSettings(): JSX.Element {
       console.error('Gagal menyimpan pengaturan toko:', err)
       if (err instanceof ApiError && err.status === 401) {
         logout()
-        navigate('/admin/login', { replace: true })
+        router.replace(loginRoute)
         return
       }
       const message = err instanceof ApiError && err.message

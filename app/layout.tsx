@@ -1,14 +1,19 @@
 import './globals.css'
 import type { Metadata } from 'next'
-import React, { type ReactNode } from 'react'
+import type { ReactElement, ReactNode } from 'react'
+import { Providers } from './providers'
 
 export const metadata: Metadata = {
   title: 'Golden Store',
   description: 'Golden Store — katalog produk dan dashboard admin.',
 }
 
-function ApiBaseBootScript(): React.ReactElement | null {
-  const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL ?? process.env.VITE_API_BASE_URL ?? ''
+function ApiBaseBootScript(): ReactElement | null {
+  if (process.env.NODE_ENV === 'development') {
+    return null
+  }
+
+  const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL ?? process.env.VITE_API_BASE_URL ?? '').trim()
   if (!apiBase) {
     return null
   }
@@ -21,12 +26,12 @@ function ApiBaseBootScript(): React.ReactElement | null {
   return <script suppressHydrationWarning dangerouslySetInnerHTML={{ __html: scriptContent }} />
 }
 
-export default function RootLayout({ children }: { children: ReactNode }): React.ReactElement {
+export default function RootLayout({ children }: { children: ReactNode }): ReactElement {
   return (
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
         <ApiBaseBootScript />
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   )

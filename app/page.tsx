@@ -1,8 +1,8 @@
 'use client'
 
-import App from '@/App'
 import type { JSX } from 'react'
+import HomePage from '@/pages/Home'
 
 export default function Page(): JSX.Element {
-  return <App />
+  return <HomePage />
 }

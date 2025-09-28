@@ -1,28 +1,40 @@
 {
   "pages": {
-    "/_not-found/page": [
-      "static/chunks/webpack-1cba1c24ff8bf992.js",
-      "static/chunks/fd9d1056-a5a6b34adc2f8692.js",
-      "static/chunks/117-429d281c4836b9a3.js",
-      "static/chunks/main-app-ebd9f5b77b35f252.js",
-      "static/chunks/app/_not-found/page-4774ecee1202e6a1.js"
+    "/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/page.js"
     ],
     "/layout": [
-      "static/chunks/webpack-1cba1c24ff8bf992.js",
-      "static/chunks/fd9d1056-a5a6b34adc2f8692.js",
-      "static/chunks/117-429d281c4836b9a3.js",
-      "static/chunks/main-app-ebd9f5b77b35f252.js",
-      "static/css/3c069348bf372cb9.css",
-      "static/chunks/app/layout-1d3769ca04431c84.js"
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/layout.css",
+      "static/chunks/app/layout.js"
     ],
-    "/page": [
-      "static/chunks/webpack-1cba1c24ff8bf992.js",
-      "static/chunks/fd9d1056-a5a6b34adc2f8692.js",
-      "static/chunks/117-429d281c4836b9a3.js",
-      "static/chunks/main-app-ebd9f5b77b35f252.js",
-      "static/chunks/e44348f0-e22475766e346f7c.js",
-      "static/chunks/771-d45086bdafba9e04.js",
-      "static/chunks/app/page-202530d12716d1dd.js"
+    "/admin/login/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/admin/login/page.js"
+    ],
+    "/admin/products/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/admin/products/page.js"
+    ],
+    "/admin/store-settings/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/admin/store-settings/page.js"
+    ],
+    "/admin/profile/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/admin/profile/page.js"
+    ],
+    "/admin/products/[id]/edit/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/admin/products/[id]/edit/page.js"
     ]
   }
 }

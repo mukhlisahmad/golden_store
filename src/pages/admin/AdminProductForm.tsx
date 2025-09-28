@@ -1,5 +1,8 @@
+"use client"
+
 import React, { type JSX } from 'react'
-import { useNavigate, useParams } from 'react-router'
+import type { Route } from 'next'
+import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card'
 import { Button } from '../../components/ui/button'
 import ProductForm, { ProductFormValues } from '../../components/admin/ProductForm'
@@ -7,10 +10,15 @@ import { useAuthStore } from '../../store/authStore'
 import { createProduct, fetchProduct, updateProduct, ApiError } from '../../services/api'
 import AdminLayout from '../../components/admin/AdminLayout'
 
-export default function AdminProductForm(): JSX.Element {
-  const navigate = useNavigate()
-  const { id } = useParams()
-  const isEdit = Boolean(id)
+interface AdminProductFormProps {
+  productId?: string
+}
+
+export default function AdminProductForm({ productId }: AdminProductFormProps): JSX.Element {
+  const router = useRouter()
+  const isEdit = Boolean(productId)
+  const loginRoute = '/admin/login' as Route
+  const productsRoute = '/admin/products' as Route
 
   const token = useAuthStore((state) => state.token)
   const isHydrated = useAuthStore((state) => state.isHydrated)
@@ -31,16 +39,16 @@ export default function AdminProductForm(): JSX.Element {
   React.useEffect(() => {
     if (!isHydrated) return
     if (!token) {
-      navigate('/admin/login', { replace: true })
+      router.replace(loginRoute)
       return
     }
 
-    if (isEdit && id) {
+    if (isEdit && productId) {
       const load = async () => {
         try {
           setPageError(null)
           setPageLoading(true)
-          const product = await fetchProduct(id)
+          const product = await fetchProduct(productId)
           setInitialValues({
             name: product.name,
             price: product.price,
@@ -55,7 +63,7 @@ export default function AdminProductForm(): JSX.Element {
           console.error('Gagal memuat produk:', err)
           if (err instanceof ApiError && err.status === 401) {
             logout()
-            navigate('/admin/login', { replace: true })
+            router.replace(loginRoute)
             return
           }
           setPageError('Produk tidak ditemukan atau gagal dimuat.')
@@ -65,24 +73,24 @@ export default function AdminProductForm(): JSX.Element {
       }
       void load()
     }
-  }, [id, isEdit, isHydrated, token, navigate, logout])
+  }, [productId, isEdit, isHydrated, token, router, logout, loginRoute])
 
   const handleSubmit = async (values: ProductFormValues) => {
     setLoading(true)
     setPageError(null)
     try {
-      if (isEdit && id) {
-        await updateProduct(id, values)
+      if (isEdit && productId) {
+        await updateProduct(productId, values)
       } else {
         await createProduct(values)
       }
-      navigate('/admin/products', { replace: true })
+      router.replace(productsRoute)
     } catch (err) {
       console.error('Simpan produk gagal:', err)
       if (err instanceof ApiError) {
         if (err.status === 401) {
           logout()
-          navigate('/admin/login', { replace: true })
+          router.replace(loginRoute)
           return
         }
         if (err.message) {
@@ -108,7 +116,7 @@ export default function AdminProductForm(): JSX.Element {
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-neutral-100 px-4 text-center dark:bg-neutral-950">
         <p className="text-sm text-red-600 dark:text-red-400">{pageError}</p>
         <button
-          onClick={() => navigate('/admin/products')}
+          onClick={() => router.push(productsRoute)}
           className="rounded-md border border-amber-300 px-4 py-2 text-sm text-amber-700 hover:bg-amber-50 dark:border-amber-200/40 dark:text-amber-200 dark:hover:bg-amber-900/20"
         >
           Kembali ke daftar produk
@@ -126,7 +134,7 @@ export default function AdminProductForm(): JSX.Element {
           : 'Tambahkan produk baru ke dalam katalog Golden Store.'
       }
       actions={
-        <Button variant="outline" onClick={() => navigate('/admin/products')}>
+        <Button variant="outline" onClick={() => router.push(productsRoute)}>
           Kembali
         </Button>
       }
@@ -140,7 +148,7 @@ export default function AdminProductForm(): JSX.Element {
           <div className="mt-4 text-right">
             <button
               type="button"
-              onClick={() => navigate('/admin/products')}
+              onClick={() => router.push(productsRoute)}
               className="text-sm text-neutral-600 underline hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-neutral-100"
             >
               Batalkan

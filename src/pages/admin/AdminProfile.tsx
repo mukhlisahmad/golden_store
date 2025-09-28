@@ -1,5 +1,8 @@
+"use client"
+
 import React, { type JSX } from 'react'
-import { useNavigate } from 'react-router'
+import type { Route } from 'next'
+import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card'
 import { Input } from '../../components/ui/input'
 import { Label } from '../../components/ui/label'
@@ -9,13 +12,14 @@ import { useAuthStore } from '../../store/authStore'
 import { ApiError, fetchAdminProfile, updateAdminProfile } from '../../services/api'
 
 function AdminProfile(): JSX.Element {
-  const navigate = useNavigate()
+  const router = useRouter()
   const token = useAuthStore((state) => state.token)
   const isHydrated = useAuthStore((state) => state.isHydrated)
   const hydrate = useAuthStore((state) => state.hydrate)
   const logout = useAuthStore((state) => state.logout)
   const user = useAuthStore((state) => state.user)
   const login = useAuthStore((state) => state.login)
+  const loginRoute = '/admin/login' as Route
 
   const [username, setUsername] = React.useState(user?.username ?? '')
   const [password, setPassword] = React.useState('')
@@ -33,9 +37,9 @@ function AdminProfile(): JSX.Element {
 
   React.useEffect(() => {
     if (isHydrated && !token) {
-      navigate('/admin/login', { replace: true })
+      router.replace(loginRoute)
     }
-  }, [isHydrated, token, navigate])
+  }, [isHydrated, token, router, loginRoute])
 
   React.useEffect(() => {
     const loadProfile = async () => {
@@ -48,7 +52,7 @@ function AdminProfile(): JSX.Element {
         console.error('Gagal memuat profil admin:', err)
         if (err instanceof ApiError && err.status === 401) {
           logout()
-          navigate('/admin/login', { replace: true })
+          router.replace(loginRoute)
         }
       } finally {
         setInitialLoading(false)
@@ -58,7 +62,7 @@ function AdminProfile(): JSX.Element {
     if (isHydrated && token) {
       void loadProfile()
     }
-  }, [isHydrated, token, logout, navigate])
+  }, [isHydrated, token, logout, router])
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -97,7 +101,7 @@ function AdminProfile(): JSX.Element {
       console.error('Gagal memperbarui profil admin:', err)
       if (err instanceof ApiError && err.status === 401) {
         logout()
-        navigate('/admin/login', { replace: true })
+        router.replace(loginRoute)
         return
       }
       const message = err instanceof ApiError && err.message

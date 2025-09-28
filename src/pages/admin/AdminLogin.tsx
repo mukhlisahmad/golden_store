@@ -1,5 +1,8 @@
+"use client"
+
 import React, { type JSX } from 'react'
-import { useNavigate, Navigate } from 'react-router'
+import type { Route } from 'next'
+import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card'
 import { Label } from '../../components/ui/label'
 import { Input } from '../../components/ui/input'
@@ -8,11 +11,12 @@ import { login as loginRequest, ApiError } from '../../services/api'
 import { useAuthStore } from '../../store/authStore'
 
 export default function AdminLogin(): JSX.Element {
-  const navigate = useNavigate()
+  const router = useRouter()
   const token = useAuthStore((state) => state.token)
   const isHydrated = useAuthStore((state) => state.isHydrated)
   const hydrate = useAuthStore((state) => state.hydrate)
   const setCredentials = useAuthStore((state) => state.login)
+  const productsRoute = '/admin/products' as Route
 
   const [username, setUsername] = React.useState('')
   const [password, setPassword] = React.useState('')
@@ -25,6 +29,12 @@ export default function AdminLogin(): JSX.Element {
     }
   }, [hydrate, isHydrated])
 
+  React.useEffect(() => {
+    if (isHydrated && token) {
+      router.replace(productsRoute)
+    }
+  }, [isHydrated, token, router, productsRoute])
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setLoading(true)
@@ -33,7 +43,7 @@ export default function AdminLogin(): JSX.Element {
     try {
       const response = await loginRequest({ username, password })
       setCredentials(response)
-      navigate('/admin/products', { replace: true })
+      router.replace(productsRoute)
     } catch (err) {
       if (err instanceof ApiError) {
         setError(err.message)
@@ -46,7 +56,11 @@ export default function AdminLogin(): JSX.Element {
   }
 
   if (isHydrated && token) {
-    return <Navigate to="/admin/products" replace />
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-neutral-100 px-4 py-10 dark:bg-neutral-950">
+        <p className="text-sm text-neutral-600 dark:text-neutral-300">Mengalihkan ke dashboard...</p>
+      </div>
+    )
   }
 
   return (
