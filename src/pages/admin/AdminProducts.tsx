@@ -18,8 +18,8 @@ export default function AdminProducts(): JSX.Element {
   const isHydrated = useAuthStore((state) => state.isHydrated)
   const hydrate = useAuthStore((state) => state.hydrate)
   const logout = useAuthStore((state) => state.logout)
-  const loginRoute = '/admin/login' as Route
-  const newProductRoute = '/admin/products/new' as Route
+  const LOGIN_ROUTE = '/admin/login' satisfies Route
+  const NEW_PRODUCT_ROUTE = '/admin/products/new' satisfies Route
 
   const [products, setProducts] = React.useState<Product[]>([])
   const [loading, setLoading] = React.useState(true)
@@ -42,7 +42,7 @@ export default function AdminProducts(): JSX.Element {
       console.error('Gagal mengambil produk:', err)
       if (err instanceof ApiError && err.status === 401) {
         logout()
-        router.replace(loginRoute)
+        router.replace(LOGIN_ROUTE)
         return
       }
       const message = err instanceof ApiError && err.message
@@ -52,16 +52,16 @@ export default function AdminProducts(): JSX.Element {
     } finally {
       setLoading(false)
     }
-  }, [logout, router, loginRoute])
+  }, [logout, router])
 
   React.useEffect(() => {
     if (!isHydrated) return
     if (!token) {
-      router.replace(loginRoute)
+      router.replace(LOGIN_ROUTE)
       return
     }
     void loadProducts()
-  }, [isHydrated, token, loadProducts, router, loginRoute])
+  }, [isHydrated, token, loadProducts, router])
 
   const handleDelete = async (id: string) => {
     const confirmDelete = window.confirm('Hapus produk ini?')
@@ -75,7 +75,7 @@ export default function AdminProducts(): JSX.Element {
       console.error('Gagal menghapus produk:', err)
       if (err instanceof ApiError && err.status === 401) {
         logout()
-        router.replace(loginRoute)
+        router.replace(LOGIN_ROUTE)
         return
       }
       const message = err instanceof ApiError && err.message ? err.message : 'Gagal menghapus produk. Silakan coba lagi.'
@@ -91,7 +91,7 @@ export default function AdminProducts(): JSX.Element {
       description="Kelola katalog Golden Store: tambah, ubah, dan hapus produk."
       actions={
         <Button
-          onClick={() => router.push(newProductRoute)}
+          onClick={() => router.push(NEW_PRODUCT_ROUTE)}
           className="bg-amber-600 text-white hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600"
         >
           + Produk Baru
@@ -143,7 +143,14 @@ export default function AdminProducts(): JSX.Element {
                       <TableCell>{product.tags?.join(', ') ?? '-'}</TableCell>
                       <TableCell className="flex justify-end gap-2">
                         <Button size="sm" variant="outline" asChild>
-                          <Link href={`/admin/products/${product.id}/edit` as Route}>Ubah</Link>
+                          <Link
+                            href={{
+                              pathname: '/admin/products/[id]/edit',
+                              query: { id: product.id },
+                            }}
+                          >
+                            Ubah
+                          </Link>
                         </Button>
                         <Button
                           size="sm"

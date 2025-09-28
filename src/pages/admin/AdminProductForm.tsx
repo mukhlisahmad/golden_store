@@ -17,8 +17,8 @@ interface AdminProductFormProps {
 export default function AdminProductForm({ productId }: AdminProductFormProps): JSX.Element {
   const router = useRouter()
   const isEdit = Boolean(productId)
-  const loginRoute = '/admin/login' as Route
-  const productsRoute = '/admin/products' as Route
+  const LOGIN_ROUTE = '/admin/login' satisfies Route
+  const PRODUCTS_ROUTE = '/admin/products' satisfies Route
 
   const token = useAuthStore((state) => state.token)
   const isHydrated = useAuthStore((state) => state.isHydrated)
@@ -39,7 +39,7 @@ export default function AdminProductForm({ productId }: AdminProductFormProps): 
   React.useEffect(() => {
     if (!isHydrated) return
     if (!token) {
-      router.replace(loginRoute)
+      router.replace(LOGIN_ROUTE)
       return
     }
 
@@ -63,7 +63,7 @@ export default function AdminProductForm({ productId }: AdminProductFormProps): 
           console.error('Gagal memuat produk:', err)
           if (err instanceof ApiError && err.status === 401) {
             logout()
-            router.replace(loginRoute)
+            router.replace(LOGIN_ROUTE)
             return
           }
           setPageError('Produk tidak ditemukan atau gagal dimuat.')
@@ -73,7 +73,7 @@ export default function AdminProductForm({ productId }: AdminProductFormProps): 
       }
       void load()
     }
-  }, [productId, isEdit, isHydrated, token, router, logout, loginRoute])
+  }, [productId, isEdit, isHydrated, token, router, logout])
 
   const handleSubmit = async (values: ProductFormValues) => {
     setLoading(true)
@@ -84,13 +84,13 @@ export default function AdminProductForm({ productId }: AdminProductFormProps): 
       } else {
         await createProduct(values)
       }
-      router.replace(productsRoute)
+      router.replace(PRODUCTS_ROUTE)
     } catch (err) {
       console.error('Simpan produk gagal:', err)
       if (err instanceof ApiError) {
         if (err.status === 401) {
           logout()
-          router.replace(loginRoute)
+          router.replace(LOGIN_ROUTE)
           return
         }
         if (err.message) {
@@ -116,7 +116,7 @@ export default function AdminProductForm({ productId }: AdminProductFormProps): 
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-neutral-100 px-4 text-center dark:bg-neutral-950">
         <p className="text-sm text-red-600 dark:text-red-400">{pageError}</p>
         <button
-          onClick={() => router.push(productsRoute)}
+          onClick={() => router.push(PRODUCTS_ROUTE)}
           className="rounded-md border border-amber-300 px-4 py-2 text-sm text-amber-700 hover:bg-amber-50 dark:border-amber-200/40 dark:text-amber-200 dark:hover:bg-amber-900/20"
         >
           Kembali ke daftar produk
@@ -134,7 +134,7 @@ export default function AdminProductForm({ productId }: AdminProductFormProps): 
           : 'Tambahkan produk baru ke dalam katalog Golden Store.'
       }
       actions={
-        <Button variant="outline" onClick={() => router.push(productsRoute)}>
+        <Button variant="outline" onClick={() => router.push(PRODUCTS_ROUTE)}>
           Kembali
         </Button>
       }
@@ -148,7 +148,7 @@ export default function AdminProductForm({ productId }: AdminProductFormProps): 
           <div className="mt-4 text-right">
             <button
               type="button"
-              onClick={() => router.push(productsRoute)}
+              onClick={() => router.push(PRODUCTS_ROUTE)}
               className="text-sm text-neutral-600 underline hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-neutral-100"
             >
               Batalkan

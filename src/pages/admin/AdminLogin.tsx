@@ -16,7 +16,7 @@ export default function AdminLogin(): JSX.Element {
   const isHydrated = useAuthStore((state) => state.isHydrated)
   const hydrate = useAuthStore((state) => state.hydrate)
   const setCredentials = useAuthStore((state) => state.login)
-  const productsRoute = '/admin/products' as Route
+  const PRODUCTS_ROUTE = '/admin/products' satisfies Route
 
   const [username, setUsername] = React.useState('')
   const [password, setPassword] = React.useState('')
@@ -31,9 +31,9 @@ export default function AdminLogin(): JSX.Element {
 
   React.useEffect(() => {
     if (isHydrated && token) {
-      router.replace(productsRoute)
+      router.replace(PRODUCTS_ROUTE)
     }
-  }, [isHydrated, token, router, productsRoute])
+  }, [isHydrated, token, router])
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -43,7 +43,7 @@ export default function AdminLogin(): JSX.Element {
     try {
       const response = await loginRequest({ username, password })
       setCredentials(response)
-      router.replace(productsRoute)
+      router.replace(PRODUCTS_ROUTE)
     } catch (err) {
       if (err instanceof ApiError) {
         setError(err.message)

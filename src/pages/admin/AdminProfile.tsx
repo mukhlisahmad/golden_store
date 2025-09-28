@@ -19,7 +19,7 @@ function AdminProfile(): JSX.Element {
   const logout = useAuthStore((state) => state.logout)
   const user = useAuthStore((state) => state.user)
   const login = useAuthStore((state) => state.login)
-  const loginRoute = '/admin/login' as Route
+  const LOGIN_ROUTE = '/admin/login' satisfies Route
 
   const [username, setUsername] = React.useState(user?.username ?? '')
   const [password, setPassword] = React.useState('')
@@ -37,9 +37,9 @@ function AdminProfile(): JSX.Element {
 
   React.useEffect(() => {
     if (isHydrated && !token) {
-      router.replace(loginRoute)
+      router.replace(LOGIN_ROUTE)
     }
-  }, [isHydrated, token, router, loginRoute])
+  }, [isHydrated, token, router])
 
   React.useEffect(() => {
     const loadProfile = async () => {
@@ -52,7 +52,7 @@ function AdminProfile(): JSX.Element {
         console.error('Gagal memuat profil admin:', err)
         if (err instanceof ApiError && err.status === 401) {
           logout()
-          router.replace(loginRoute)
+          router.replace(LOGIN_ROUTE)
         }
       } finally {
         setInitialLoading(false)
@@ -101,7 +101,7 @@ function AdminProfile(): JSX.Element {
       console.error('Gagal memperbarui profil admin:', err)
       if (err instanceof ApiError && err.status === 401) {
         logout()
-        router.replace(loginRoute)
+        router.replace(LOGIN_ROUTE)
         return
       }
       const message = err instanceof ApiError && err.message

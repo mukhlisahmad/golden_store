@@ -14,11 +14,13 @@ interface AdminLayoutProps {
   children: React.ReactNode
 }
 
-const NAV_ITEMS: Array<{ to: Route; label: string }> = [
-  { to: '/admin/products' as Route, label: 'Produk' },
-  { to: '/admin/store-settings' as Route, label: 'Pengaturan Toko' },
-  { to: '/admin/profile' as Route, label: 'Profil Admin' },
-]
+const NAV_ITEMS = [
+  { to: '/admin/products', label: 'Produk' },
+  { to: '/admin/store-settings', label: 'Pengaturan Toko' },
+  { to: '/admin/profile', label: 'Profil Admin' },
+] satisfies Array<{ to: Route; label: string }>
+
+const LOGIN_ROUTE = '/admin/login' satisfies Route
 
 export function AdminLayout({ title, description, actions, children }: AdminLayoutProps): JSX.Element {
   const router = useRouter()
@@ -28,7 +30,7 @@ export function AdminLayout({ title, description, actions, children }: AdminLayo
 
   const handleLogout = React.useCallback(() => {
     logout()
-    router.replace('/admin/login' as Route)
+    router.replace(LOGIN_ROUTE)
   }, [logout, router])
 
   return (

@@ -82,7 +82,7 @@ function AdminStoreSettings(): JSX.Element {
   const [saving, setSaving] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
   const [success, setSuccess] = React.useState<string | null>(null)
-  const loginRoute = '/admin/login' as Route
+  const LOGIN_ROUTE = '/admin/login' satisfies Route
 
   React.useEffect(() => {
     if (!isHydrated) {
@@ -92,9 +92,9 @@ function AdminStoreSettings(): JSX.Element {
 
   React.useEffect(() => {
     if (isHydrated && !token) {
-      router.replace(loginRoute)
+      router.replace(LOGIN_ROUTE)
     }
-  }, [isHydrated, token, router, loginRoute])
+  }, [isHydrated, token, router])
 
   React.useEffect(() => {
     setForm(mapSettingsToForm(settings))
@@ -202,7 +202,7 @@ function AdminStoreSettings(): JSX.Element {
       console.error('Gagal menyimpan pengaturan toko:', err)
       if (err instanceof ApiError && err.status === 401) {
         logout()
-        router.replace(loginRoute)
+        router.replace(LOGIN_ROUTE)
         return
       }
       const message = err instanceof ApiError && err.message
