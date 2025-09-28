@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server'
 import { prisma } from '../../_lib/prisma'
 import {
   BadRequestError,
-  IS_BUILD_PHASE,
+  isBuildPhase,
   NotFoundError,
   asJsonResponse,
   ensureBootstrap,
@@ -21,7 +21,7 @@ interface RouteContext {
 
 export async function GET(_req: NextRequest, context: RouteContext) {
   try {
-    if (IS_BUILD_PHASE) {
+    if (isBuildPhase()) {
       throw new NotFoundError('Produk tidak ditemukan.')
     }
 
@@ -46,7 +46,7 @@ export async function GET(_req: NextRequest, context: RouteContext) {
 
 export async function PUT(req: NextRequest, context: RouteContext) {
   try {
-    if (IS_BUILD_PHASE) {
+    if (isBuildPhase()) {
       return asJsonResponse({ message: 'Product modifications are disabled during build.' }, { status: 503 })
     }
 
@@ -90,7 +90,7 @@ export async function PUT(req: NextRequest, context: RouteContext) {
 
 export async function DELETE(req: NextRequest, context: RouteContext) {
   try {
-    if (IS_BUILD_PHASE) {
+    if (isBuildPhase()) {
       return asJsonResponse({ message: 'Product modifications are disabled during build.' }, { status: 503 })
     }
 

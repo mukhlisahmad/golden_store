@@ -3,7 +3,7 @@ import { NextRequest } from 'next/server'
 import { prisma } from '../../_lib/prisma'
 import {
   BadRequestError,
-  IS_BUILD_PHASE,
+  isBuildPhase,
   UnauthorizedError,
   asJsonResponse,
   createToken,
@@ -13,7 +13,7 @@ import {
 
 export async function POST(req: NextRequest) {
   try {
-    if (IS_BUILD_PHASE) {
+    if (isBuildPhase()) {
       return asJsonResponse({ message: 'Login is disabled during build.' }, { status: 503 })
     }
 
