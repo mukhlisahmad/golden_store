@@ -3,6 +3,7 @@ import { NextRequest } from 'next/server'
 import { prisma } from '../../_lib/prisma'
 import {
   BadRequestError,
+  IS_BUILD_PHASE,
   UnauthorizedError,
   asJsonResponse,
   createToken,
@@ -12,6 +13,10 @@ import {
 
 export async function POST(req: NextRequest) {
   try {
+    if (IS_BUILD_PHASE) {
+      return asJsonResponse({ message: 'Login is disabled during build.' }, { status: 503 })
+    }
+
     await ensureBootstrap()
     const body = await req.json().catch(() => ({})) as Record<string, unknown>
     const username = typeof body.username === 'string' ? body.username.trim() : ''

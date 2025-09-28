@@ -6,6 +6,7 @@ import { prisma } from './prisma'
 const JWT_SECRET = process.env.JWT_SECRET || 'change-me-in-production'
 const TOKEN_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '2h'
 const ADMIN_DEFAULT_PASSWORD = process.env.ADMIN_DEFAULT_PASSWORD || ''
+export const IS_BUILD_PHASE = typeof process !== 'undefined' && process.env.NEXT_PHASE === 'phase-production-build'
 
 export const DEFAULT_STORE_SETTINGS = {
   storeName: 'Golden Store',
@@ -63,6 +64,10 @@ export async function requireAuth(req: NextRequest): Promise<AuthPayload> {
 }
 
 export async function ensureBootstrap(): Promise<void> {
+  if (IS_BUILD_PHASE) {
+    return
+  }
+
   if (!bootstrapPromise) {
     bootstrapPromise = (async () => {
       await ensureDefaultAdmin()

@@ -3,6 +3,7 @@ import { NextRequest } from 'next/server'
 import { prisma } from '../../_lib/prisma'
 import {
   BadRequestError,
+  IS_BUILD_PHASE,
   NotFoundError,
   asJsonResponse,
   createToken,
@@ -13,6 +14,10 @@ import {
 
 export async function GET(req: NextRequest) {
   try {
+    if (IS_BUILD_PHASE) {
+      return asJsonResponse({ message: 'Admin profile not available during build.' }, { status: 503 })
+    }
+
     await ensureBootstrap()
     const user = await requireAuth(req)
 
@@ -33,6 +38,10 @@ export async function GET(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   try {
+    if (IS_BUILD_PHASE) {
+      return asJsonResponse({ message: 'Admin profile update not available during build.' }, { status: 503 })
+    }
+
     await ensureBootstrap()
     const user = await requireAuth(req)
     const body = await req.json().catch(() => ({})) as Record<string, unknown>

@@ -30,17 +30,17 @@ declare namespace __next_route_internal_types__ {
 
   type StaticRoutes = 
     | `/admin/login`
-    | `/admin/products/new`
     | `/admin`
     | `/admin/products`
-    | `/admin/store-settings`
     | `/admin/profile`
+    | `/admin/store-settings`
+    | `/admin/products/new`
     | `/api/admin/me`
     | `/api/auth/login`
     | `/api/health`
-    | `/`
-    | `/api/store/settings`
     | `/api/products`
+    | `/api/store/settings`
+    | `/`
   type DynamicRoutes<T extends string = string> = 
     | `/admin/products/${SafeSlug<T>}/edit`
     | `/api/products/${SafeSlug<T>}`

@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server'
 import { prisma } from '../_lib/prisma'
 import {
   BadRequestError,
+  IS_BUILD_PHASE,
   asJsonResponse,
   ensureBootstrap,
   ensureUniqueSlug,
@@ -13,6 +14,10 @@ import {
 
 export async function GET() {
   try {
+    if (IS_BUILD_PHASE) {
+      return asJsonResponse([])
+    }
+
     await ensureBootstrap()
     const products = await prisma.product.findMany({ orderBy: { createdAt: 'desc' } })
     return asJsonResponse(products)
@@ -23,6 +28,10 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
+    if (IS_BUILD_PHASE) {
+      return asJsonResponse({ message: 'Product modifications are disabled during build.' }, { status: 503 })
+    }
+
     await ensureBootstrap()
     await requireAuth(req)
     const body = await req.json().catch(() => ({})) as Record<string, unknown>

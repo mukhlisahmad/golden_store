@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server'
 import { prisma } from '../../_lib/prisma'
 import {
   BadRequestError,
+  IS_BUILD_PHASE,
   asJsonResponse,
   ensureBootstrap,
   getStoreSettings,
@@ -13,6 +14,10 @@ import {
 
 export async function GET() {
   try {
+    if (IS_BUILD_PHASE) {
+      return asJsonResponse(serializeStoreSettings(null))
+    }
+
     const settings = await getStoreSettings()
     return asJsonResponse(settings)
   } catch (error) {
@@ -22,6 +27,10 @@ export async function GET() {
 
 export async function PUT(req: NextRequest) {
   try {
+    if (IS_BUILD_PHASE) {
+      return asJsonResponse({ message: 'Store settings update not available during build.' }, { status: 503 })
+    }
+
     await ensureBootstrap()
     await requireAuth(req)
     const body = await req.json().catch(() => ({})) as Record<string, unknown>
